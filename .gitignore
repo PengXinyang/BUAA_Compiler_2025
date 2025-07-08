@@ -4,6 +4,7 @@ target/
 !**/src/main/**/target/
 !**/src/test/**/target/
 cmake-build-debug
+.gitignore
 
 ### STS ###
 .apt_generated
