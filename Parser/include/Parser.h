@@ -43,7 +43,6 @@ private:
     TreeNode* LVal();//左值表达式
     TreeNode* PrimaryExp();//基本表达式
     TreeNode* Number();//数值
-    TreeNode* Character();//字符
     TreeNode* UnaryExp();//一元表达式
     TreeNode* UnaryOp();//单目运算符
     TreeNode* FuncRParams();//函数实参表

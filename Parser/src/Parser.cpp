@@ -37,7 +37,7 @@ TreeNode *Parser::CompUnit() {
     TreeNode* root = ParserTree::createTree(word);
     //预读单词,考虑到First集合，选择预读3位
     preWords = tokenScanner->preReadWords(3);
-    while(preWords[0].word=="const" || preWords[2].word!="(") {
+    while(preWords[0].word=="const" || preWords[0].word_type=="STATICTK" || preWords[2].word!="(") {
         //第一位是const或第3位不是左括号，说明一定不是函数
         ParserTree::catchTree(root,Decl());
         //预读单词,考虑到First集合，选择预读3位
@@ -109,7 +109,7 @@ TreeNode *Parser::Btype() {
     word.word = "<Btype>";
     TreeNode *btypeRoot = ParserTree::createTree(word);
     now_word=tokenScanner->readNowWord();
-    if(now_word.word=="int"||now_word.word=="char") {
+    if(now_word.word=="int") {
         //说明是Btype
         ParserTree::catchTree(btypeRoot,now_word);
     }
@@ -198,6 +198,12 @@ TreeNode *Parser::VarDecl() {
     Word word;
     word.word="<VarDecl>";
     TreeNode* root = ParserTree::createTree(word);
+    //预读，看是不是static
+    preWords = tokenScanner->preReadWords(1);
+    if(preWords[0].word_type=="STATICTK") {
+        now_word=tokenScanner->readNowWord();
+        ParserTree::catchTree(root, now_word);
+    }
     ParserTree::catchTree(root,Btype());
     ParserTree::catchTree(root,VarDef());
     //预读，看看是不是逗号
@@ -308,7 +314,7 @@ TreeNode *Parser::FuncDef() {
         now_word=tokenScanner->readNowWord();
         ParserTree::catchTree(root, now_word);
     }
-    else if(preWords[0].word=="int"||preWords[0].word=="char") {
+    else if(preWords[0].word=="int") {
         //说明是形参的First集
         ParserTree::catchTree(root,FuncFParams());
         //预读，看下一位是不是右括号
@@ -360,7 +366,7 @@ TreeNode *Parser::FuncType() {
     word.word = "<FuncType>";
     TreeNode *btypeRoot = ParserTree::createTree(word);
     now_word=tokenScanner->readNowWord();
-    if(now_word.word=="int"||now_word.word=="char"||now_word.word=="void") {
+    if(now_word.word=="int"||now_word.word=="void") {
         //说明是Btype
         ParserTree::catchTree(btypeRoot,now_word);
     }
@@ -443,7 +449,7 @@ TreeNode *Parser::BlockItem() {
     word.word="<BlockItem>";
     TreeNode* root = ParserTree::createTree(word);
     preWords=tokenScanner->preReadWords(1);
-    if(preWords[0].word=="const" || preWords[0].word=="int" || preWords[0].word=="char") {
+    if(preWords[0].word=="const" || preWords[0].word=="int" || preWords[0].word_type=="STATICTK") {
         //说明是声明
         ParserTree::catchTree(root,Decl());
     } else {
@@ -802,11 +808,6 @@ TreeNode *Parser::PrimaryExp() {
         //连接Number
         ParserTree::catchTree(root,Number());
     }
-    //Character
-    else if(preWords[0].word_type=="CHRCON") {
-        //连接Character
-        ParserTree::catchTree(root,Character());
-    }
     else {
         printf("PrimaryExp可能出现错误\n");
     }
@@ -818,15 +819,6 @@ TreeNode *Parser::Number() {
     word.word = "<Number>";
     TreeNode* root = ParserTree::createTree(word);
     //直接连接
-    now_word=tokenScanner->readNowWord();
-    ParserTree::catchTree(root, now_word);
-    return root;
-}
-
-TreeNode *Parser::Character() {
-    Word word;
-    word.word = "<Character>";
-    TreeNode* root = ParserTree::createTree(word);
     now_word=tokenScanner->readNowWord();
     ParserTree::catchTree(root, now_word);
     return root;

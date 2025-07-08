@@ -13,7 +13,7 @@ TokenType::TokenType() {
     tokenTypeMap["main"] = "MAINTK";
     tokenTypeMap["const"] = "CONSTTK";
     tokenTypeMap["int"] = "INTTK";
-    tokenTypeMap["char"] = "CHARTK";
+    tokenTypeMap["static"] = "STATICTK";
     tokenTypeMap["break"] = "BREAKTK";
     tokenTypeMap["continue"] = "CONTINUETK";
     tokenTypeMap["if"] = "IFTK";
